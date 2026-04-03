@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Bohemians — Screenplay Database</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0c0c0c;--bg2:#141414;--bg3:#1a1a1a;--bg4:#222;
+  --text:#e0e0e0;--text2:#aaa;--text3:#666;--text4:#444;
+  --white:#fff;--border:#252525;
+  --green:#6abf7b;--red:#bf6a6a;--amber:#d4943a;--purple:#9a7abf;
+}
+body{background:var(--bg);color:var(--text);font-family:'Source Serif 4',Georgia,serif;font-size:16px;line-height:1.7;min-height:100vh}
+
+/* HEADER */
+.hdr{background:rgba(12,12,12,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:16px 24px;position:sticky;top:0;z-index:100}
+.hdr-inner{max-width:900px;margin:0 auto;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.hdr h1{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--white);letter-spacing:.05em}
+.hdr .sub{font-size:11px;color:var(--text3);font-style:italic;margin-left:8px}
+.search{width:260px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;padding:7px 12px;border-radius:4px;outline:none;transition:border .2s}
+.search:focus{border-color:#555}
+.search::placeholder{color:var(--text4)}
+
+/* TABS */
+.tabs{max-width:900px;margin:0 auto;padding:10px 24px 0;display:flex;gap:0;border-bottom:1px solid var(--border)}
+.tab{background:none;border:none;color:var(--text3);font-family:inherit;font-size:13px;padding:7px 16px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;text-transform:capitalize}
+.tab:hover{color:var(--text2)}
+.tab.on{color:var(--white);border-bottom-color:var(--white)}
+
+/* MAIN */
+.main{max-width:900px;margin:0 auto;padding:24px 24px 100px}
+
+/* STATS */
+.stats{display:flex;gap:32px;margin-bottom:24px}
+.stat-n{font-size:28px;font-weight:700;line-height:1}
+.stat-l{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+
+/* SCENE CARDS */
+.sec-hdr{font-size:13px;font-weight:700;color:var(--white);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);letter-spacing:.02em;margin-top:24px}
+.sec-hdr:first-child{margin-top:0}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:12px 16px;margin-bottom:4px;display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:12px;transition:all .15s;cursor:pointer}
+.sc:hover{background:var(--bg3);border-color:#333}
+.sc.dim{opacity:.5;cursor:default}
+.sc.dim:hover{background:var(--bg2);border-color:var(--border)}
+.sc-num{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);text-align:center}
+.sc-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px}
+.sc-sum{font-size:12px;color:var(--text2);line-height:1.4}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px;white-space:nowrap}
+.badge-drafted{color:var(--green);background:rgba(106,191,123,.1);border:1px solid rgba(106,191,123,.2)}
+.badge-sketch{color:var(--amber);background:rgba(212,148,58,.1);border:1px solid rgba(212,148,58,.2)}
+.badge-concept{color:var(--purple);background:rgba(154,122,191,.1);border:1px solid rgba(154,122,191,.2)}
+.badge-gap{color:var(--red);background:rgba(191,106,106,.1);border:1px solid rgba(191,106,106,.2)}
+
+/* SCENE DETAIL */
+.back{background:none;border:none;color:var(--text3);font-family:inherit;font-size:13px;cursor:pointer;padding:4px 0;margin-bottom:20px}
+.back:hover{color:var(--text2)}
+.det-hdr{margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.det-hdr h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--white);line-height:1.2}
+.det-hdr h2{font-size:16px;font-weight:400;color:var(--text2);margin:4px 0 12px;font-style:italic}
+.det-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.meta-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);background:var(--bg3);padding:3px 7px;border-radius:3px;border:1px solid var(--border)}
+.det-sum{color:var(--text2);font-size:14px;font-style:italic;line-height:1.5}
+
+/* SCREENPLAY TEXT */
+.screenplay{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12.5px;
+  line-height:1.8;
+  color:#ccc;
+  white-space:pre-wrap;
+  max-width:640px;
+  margin:0 auto;
+  padding:0 4px;
+  word-wrap:break-word;
+}
+.screenplay .loading{text-align:center;color:var(--text3);font-style:italic;padding:40px}
+
+/* CHARACTERS */
+.char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.char{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:16px}
+.char:hover{border-color:#333}
+.char h3{font-size:15px;font-weight:700;color:var(--white);margin-bottom:2px}
+.char .age{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:8px}
+.char p{font-size:13px;color:var(--text2);line-height:1.5}
+.char .voice{font-size:11px;color:var(--text3);border-top:1px solid var(--border);padding-top:8px;margin-top:10px;font-family:'IBM Plex Mono',monospace;font-style:italic}
+
+/* DECISIONS */
+.dec-group{margin-bottom:24px}
+.dec-group h3{font-size:13px;font-weight:700;color:var(--white);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.dec-item{display:flex;gap:10px;padding:4px 0;font-size:13px;align-items:baseline}
+.dec-item .chk{color:var(--green);font-family:'IBM Plex Mono',monospace;font-size:11px;flex-shrink:0}
+.dec-item .txt{color:var(--text2)}
+
+.empty{text-align:center;padding:40px;color:var(--text3);font-style:italic}
+
+@media(max-width:768px){
+  .hdr-inner{flex-direction:column}.search{width:100%}
+  .tabs{padding:6px 12px 0}.main{padding:16px 12px 80px}
+  .sc{grid-template-columns:28px 1fr auto}
+  .char-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="hdr"><div class="hdr-inner">
+  <div><h1>THE BOHEMIANS<span class="sub">Prague, Summer 1997</span></h1></div>
+  <input class="search" id="search" placeholder="Search scenes, characters, dialogue...">
+</div></header>
+<nav class="tabs" id="tabs">
+  <button class="tab on" data-v="scenes">Scenes</button>
+  <button class="tab" data-v="characters">Characters</button>
+  <button class="tab" data-v="decisions">Decisions</button>
+</nav>
+<main class="main" id="app"></main>
+
+<script>
+const SCENES=[
+{n:"1",t:"Los Angeles / Malibu Estate / Pool House",s:"Los Angeles to LAX",st:"drafted",f:"scene-01.md",c:["Riley","Mother","Maid"],sum:"LA montage. Pool, bong, mom's call, mirror moment. Groundskeeper's golf cart. Siddhartha leaving the palace."},
+{n:"2",t:"Delmer Encounter",s:"Los Angeles to LAX",st:"drafted",f:"scene-02.md",c:["Riley","Delmer","Madison"],sum:"Delmer Martin rolls up. Catnip, Sega Genesis, Bar Mitzvah. Madison arrives with red eyes. 'Allergies.'"},
+{n:"3",t:"PCH — Traffic / Wrangler / Burning VW",s:"Los Angeles to LAX",st:"drafted",f:"scene-03.md",c:["Riley","Madison","Bryce","Perry","Candace","Chris"],sum:"KIIS FM. Napalm Sunday. Misfits. Traffic jam. Wrangler crew. Burning VW Bus. Chris: 'I AM A GOLDEN GOD!'"},
+{n:"4",t:"LAX Curbside Breakup",s:"Los Angeles to LAX",st:"drafted",f:"scene-04.md",c:["Riley","Madison","Traffic Cop"],sum:"Traffic cop as ticking clock. 'I will email you every day.' Parking garage breakdown. LA bookend."},
+{n:"5",t:"Prague Airport — Guitar / Boarding Pass",s:"Prague Arrival",st:"drafted",f:"scene-05.md",c:["Riley"],sum:"Late afternoon. Guitar broken — played deadpan. Boarding pass confetti. Janitor through glass."},
+{n:"6",t:"Marc's Arrival",s:"Prague Arrival",st:"drafted",f:"scene-06.md",c:["Riley","Marc"],sum:"Marc at dusk. Mid-monologue. Hungarian boots. Father in Berlin. 'You look like shit.'"},
+{n:"7",t:"Van — Night Drive / Errand",s:"Prague Arrival",st:"drafted",f:"scene-07.md",c:["Riley","Marc"],sum:"'Should've been here five years ago.' Errand stop. Pops, woman in heels, bottle rockets."},
+{n:"8",t:"Flat — Arrival / Days Alone",s:"Prague Arrival",st:"drafted",f:"scene-08.md",c:["Riley","Marc"],sum:"Marc leaves. DAYS PASS. Prince can't feed himself. Guitar coffin by the door."},
+{n:"9",t:"Serenity / Mario Kart",s:"Prague Arrival",st:"drafted",f:"scene-09.md",c:["Riley","Serenity"],sum:"DAYS LATER. 'There he is.' Flat cleaned, restocked. Toad vs. Yoshi. First exhale."},
+{n:"10",t:"Prague Streets — Wandering",s:"Prague Early Days",st:"drafted",f:"scene-10.md",c:["Riley"],sum:"Marc's useless map. Old woman. Butcher shop. Music pulls him to record store."},
+{n:"11",t:"Record Store — First Tereza",s:"Prague Early Days",st:"drafted",f:"scene-11.md",c:["Riley","Tereza","Clerk"],sum:"Tereza works here. Coffee spill. 'It's fine.' No names. No warmth."},
+{n:"12",t:"Production Office — Guitar",s:"Prague Early Days",st:"drafted",f:"scene-12.md",c:["Riley","Marc"],sum:"Marc's failed-romance guitar. 'She's engaged to a dentist now.' 'Your ticket to sanity.'"},
+{n:"13",t:"Hotel Continental Poolside",s:"Prague Early Days",st:"gap",f:null,c:["Riley","Serenity"],sum:"Slim Aarons tableau. Serenity's privilege. Bill panic. Hotel chase. PRIORITY GAP."},
+{n:"14",t:"Beer Garden — Madison Talk",s:"Prague Early Days",st:"gap",f:null,c:["Riley","Serenity"],sum:"Goulash. 'We're actually kind of friends.' PRIORITY GAP."},
+{n:"15",t:"Serenity's Whirlwind",s:"Prague Early Days",st:"sketch",f:null,c:["Riley","Serenity"],sum:"Vespa. Beer garden. Roller rink. Can be deferred."},
+{n:"16",t:"Park — Lester Carmichael",s:"Siblings / Weed Heist",st:"drafted",f:"scene-16.md",c:["Riley","Dimitri","Tereza"],sum:"Colonel Murder. 'America Milwaukee.' Air-drumming. 'Are you sure you're not from Canada?'"},
+{n:"17",t:"Weed Heist",s:"Siblings / Weed Heist",st:"drafted",f:"scene-17.md",c:["Riley","Dimitri","Tereza"],sum:"Concrete channel. Leatherman. 'Charge it, man!' 'Does he do this a lot?' / 'Unfortunately.'"},
+{n:"18",t:"Shotgun Sequence",s:"Siblings / Weed Heist",st:"drafted",f:"scene-18.md",c:["Riley","Dimitri","Tereza","Uncle"],sum:"Uncle with shotgun. Escape through channel. Autobiographical."},
+{n:"19",t:"Metro — Rain Czechs",s:"Siblings / Weed Heist",st:"drafted",f:"scene-19.md",c:["Riley","Dimitri","Tereza"],sum:"'He never shoots.' Spaghetti with ketchup. Rain Czechs born. Useless map."},
+{n:"20",t:"Serenity's Dorm Room",s:"Night Out",st:"drafted",f:"scene-20.md",c:["Riley","Serenity"],sum:"Leo's lair. Oriental screen. Aspen cat condo. 'Can't put toothpaste back.' Zip me."},
+{n:"A",t:"Alley — Smoking with Actor",s:"Night Out",st:"drafted",f:"scene-alley.md",c:["Riley","The Actor","Marc"],sum:"Pinball machine. Weed. Venice vs Malibu. 'Cool guys don't make great dads.' Jo's Bar invite."},
+{n:"21",t:"Taxi — MDMA",s:"Night Out",st:"drafted",f:"scene-21.md",c:["Riley","Serenity","Erin"],sum:"Three tablets. 'Don't worry about it.'"},
+{n:"22",t:"Jo's Bar",s:"Night Out",st:"drafted",f:"scene-22.md",c:["Riley","Serenity","Erin","Marc","The Actor"],sum:"Misgivings. Marc edgy. Riley rolling. 'I'm supernova.'"},
+{n:"23",t:"Radost FX",s:"Night Out",st:"drafted",f:"scene-23.md",c:["Riley","Serenity","Erin"],sum:"Peak intensity. Chemical euphoria."},
+{n:"24",t:"Charles Bridge — Dawn",s:"Night Out",st:"drafted",f:"scene-24.md",c:["Riley","Serenity","Erin"],sum:"Wizard of Oz. Riley is Toto. 'The best dog.'"},
+{n:"25",t:"Erin's Loft — Morning",s:"Night Out",st:"drafted",f:"scene-25.md",c:["Riley","Serenity","Erin"],sum:"Pillow fight. Feathers. Stranger. 'Dobré ráno.'"},
+{n:"27",t:"Coffeehouse — Milos",s:"Post-Night Out",st:"gap",f:null,c:["Riley","Tereza","Milos"],sum:"Milos refuses English. 'Who's the tourist?' Riley's privilege fails. PRIORITY GAP."},
+{n:"28",t:"Sabina Bathroom",s:"Post-Night Out",st:"drafted",f:"scene-28.md",c:["Riley","Sabina"],sum:"Shower intrusion. 'You should turn off water.' Karlovy Vary tickets."},
+{n:"36",t:"Karlovy Vary Sequence",s:"Karlovy Vary",st:"sketch",f:null,c:["Riley","Serenity","Father","Sabina"],sum:"Road trip. Festival. 'Why are you here?' Father appears. Pool in formalwear. CRITICAL GAP."},
+{n:"M1",t:"Madison — USC / Kellerman",s:"Madison's Arc",st:"concept",f:null,c:["Madison","Kellerman"],sum:"Italian literature. The Aeneid. Professor catches up. 'You okay?' CONCEPT ONLY."}
+];
+
+const CHARS=[
+{name:"Riley Sands",age:"17",energy:"Blocked Ajna",desc:"Scattered Aquarian. Pale for Malibu. Unknown Pleasures tee, chipped black polish. Technically proficient on guitar — his saving grace.",voice:"Trails off. Band name obsessions. Massive hits."},
+{name:"Madison Cheah",age:"17",energy:"Aries / Virgo / Cap",desc:"Malaysian/Singaporean. Precision and control. Ray-Bans, hair pulled back. Arc ends at USC Film School — her first independent choice.",voice:"Sharp, economical. 'Czech. Not Russian.'"},
+{name:"Serenity",age:"17",energy:"Svadhisthana (sacral)",desc:"Ultra-Leo. Golden Robert Plant curls. Barefoot rich hippie. False bodhisattva — comfort, not transformation. Orange Vespa.",voice:"'Can't put the toothpaste back.' Casual, warm."},
+{name:"Dimitri Jelinek",age:"18",energy:"Muladhara (root)",desc:"Tereza's brother. Metal-band hair. Nokia + Leatherman. Charming bullshitter. Petty marijuana thief with military precision.",voice:"'Charge it, man!' 'Premium.' Drops articles."},
+{name:"Tereza Jelinek",age:"17",energy:"Anahata-Vishuddha",desc:"Half-Romani. Record store employee. Focused, mysterious. Healing abilities. Plays cello. Code-switches.",voice:"'It's fine.' 'Maybe.' 'You play well.'"},
+{name:"Marc",age:"30s",energy:"Expat golden retriever",desc:"Ponytail. Cargo everything. 'Should've been here five years ago.' Nokia. Dimitri's doppelgänger.",voice:"Never stops talking. 'You would not BELIEVE.'"},
+{name:"Erin",age:"—",energy:"Sahasrara (crown)",desc:"Black-Canadian. Sees through facades. 'There was hesitation.' Industrial loft.",voice:"Sharp. Direct. 'Charmed.'"},
+{name:"Sabina",age:"—",energy:"Complete indifference",desc:"Father's girlfriend. Treats Riley as furniture. Magazine, headphones, gum.",voice:"'Turn off water. Wasting.' 'You can go now.'"},
+{name:"Delmer Martin",age:"12",energy:"Toxic privilege",desc:"Zinc oxide. Clip-on sunglasses. Billabong. Golf cart. Never told no.",voice:"'Have fun in Poland. Dickface.'"},
+{name:"David Kellerman",age:"Early 30s",energy:"—",desc:"USC Italian lit professor. Charismatic. Wedding ring. Not sleazy — dangerous.",voice:"Not yet drafted."}
+];
+
+const DECS=[
+{g:"Music & Sound",items:["Napalm Sunday — Riley's band name","Misfits 'Last Caress' replaces Sonic Youth","KIIS FM for Madison, not Mazzy Star","'Cruel Summer' placeholder","Mazzy Star saved for post-breakup"]},
+{g:"Structure",items:["New Scene 1 — LA montage / pool house","No airplane scene","Breakup at LAX curb. Traffic cop.","Prague: late afternoon → dusk","Days alone before Serenity arrives","Madison's arc treated separately"]},
+{g:"Characters",items:["Wrangler: Bryce, Perry, Candace, Chris","Tereza works at record store","Marc's guitar: bought for girl, she married dentist","Marc/Dimitri doppelgänger — never interact","Lester Carmichael — definitive park meeting"]},
+{g:"Madison's Arc",items:["USC, not UCLA","Italian lit: Virgil, Dante, Petrarch, Ovid","The Aeneid breaks her open","Kellerman: early 30s, wedding ring, not sleazy","Italian lit → cinema → film festival","USC Film School = first independent decision"]},
+{g:"Banked (Not Applied)",items:["Scene 1 may run long","Delmer needs tonal stitch into Madison","Riley needs hunger in Prague","LA as parent: beautiful, withholding"]}
+];
+
+const BC={drafted:"badge-drafted",sketch:"badge-sketch",concept:"badge-concept",gap:"badge-gap"};
+const BL={drafted:"Drafted",sketch:"Sketch",concept:"Concept",gap:"Gap"};
+
+let view="scenes",sel=null,query="",cache={};
+const $=id=>document.getElementById(id);
+
+function filt(arr,fn){return query?arr.filter(fn):arr}
+
+async function loadScene(file){
+  if(cache[file])return cache[file];
+  try{
+    // Try relative path (GitHub Pages)
+    let r=await fetch("scenes/"+file);
+    if(!r.ok) throw new Error();
+    let t=await r.text();
+    cache[file]=t;
+    return t;
+  }catch{
+    return null;
+  }
+}
+
+function render(){
+  const app=$("app");
+  if(view==="scenes"&&sel){renderDetail(app);return}
+  if(view==="scenes"){renderScenes(app);return}
+  if(view==="characters"){renderChars(app);return}
+  if(view==="decisions"){renderDecs(app);return}
+}
+
+function renderScenes(el){
+  const q=query.toLowerCase();
+  const filtered=filt(SCENES,s=>[s.t,s.sum,s.s,...s.c,s.n].join(" ").toLowerCase().includes(q));
+  const secs={};
+  filtered.forEach(s=>{if(!secs[s.s])secs[s.s]=[];secs[s.s].push(s)});
+  const dc=SCENES.filter(s=>s.st==="drafted").length;
+  let h=`<div class="stats"><div><div class="stat-n" style="color:var(--white)">${SCENES.length}</div><div class="stat-l">Total</div></div><div><div class="stat-n" style="color:var(--green)">${dc}</div><div class="stat-l">Drafted</div></div><div><div class="stat-n" style="color:var(--red)">${SCENES.length-dc}</div><div class="stat-l">Remaining</div></div></div>`;
+  if(!Object.keys(secs).length)h+=`<div class="empty">No scenes match.</div>`;
+  for(const[sec,scenes]of Object.entries(secs)){
+    h+=`<div class="sec-hdr">${sec}</div>`;
+    scenes.forEach(s=>{
+      const has=!!s.f;
+      h+=`<div class="sc${has?'':' dim'}" ${has?`onclick="openScene('${s.n}')"`:''}><div class="sc-num">${s.n}</div><div><div class="sc-title">${s.t}</div><div class="sc-sum">${s.sum}</div></div><span class="badge ${BC[s.st]}">${BL[s.st]}</span></div>`;
+    });
+  }
+  el.innerHTML=h;
+}
+
+async function renderDetail(el){
+  const s=SCENES.find(x=>x.n===sel);
+  if(!s){el.innerHTML="";return}
+  let meta=`<span class="badge ${BC[s.st]}">${BL[s.st]}</span>`;
+  if(s.f)meta+=`<span class="meta-tag">${s.f}</span>`;
+  s.c.forEach(c=>{meta+=`<span class="meta-tag">${c}</span>`});
+  el.innerHTML=`<button class="back" onclick="closeScene()">← Back</button><div class="det-hdr"><h1>Scene ${s.n}</h1><h2>${s.t}</h2><div class="det-meta">${meta}</div><p class="det-sum">${s.sum}</p></div><div class="screenplay"><div class="loading">Loading scene text...</div></div>`;
+  if(s.f){
+    const txt=await loadScene(s.f);
+    const sp=el.querySelector(".screenplay");
+    if(txt){
+      sp.textContent=txt;
+    }else{
+      sp.innerHTML=`<div class="loading">Could not load scene file. If running locally, start a server:<br><code style="color:var(--amber)">python3 -m http.server 8000</code></div>`;
+    }
+  }else{
+    el.querySelector(".screenplay").innerHTML=`<div class="loading">Scene not yet drafted.</div>`;
+  }
+}
+
+function renderChars(el){
+  const q=query.toLowerCase();
+  const f=filt(CHARS,c=>[c.name,c.desc,c.voice,c.energy].join(" ").toLowerCase().includes(q));
+  if(!f.length){el.innerHTML=`<div class="empty">No characters match.</div>`;return}
+  el.innerHTML=`<div class="char-grid">${f.map(c=>`<div class="char"><h3>${c.name}</h3><div class="age">${c.age} · ${c.energy}</div><p>${c.desc}</p><div class="voice">"${c.voice}"</div></div>`).join("")}</div>`;
+}
+
+function renderDecs(el){
+  el.innerHTML=`<div style="max-width:640px">${DECS.map(g=>`<div class="dec-group"><h3>${g.g}</h3>${g.items.map(i=>`<div class="dec-item"><span class="chk">${g.g.includes("Banked")?"—":"✓"}</span><span class="txt">${i}</span></div>`).join("")}</div>`).join("")}</div>`;
+}
+
+// Global functions for onclick
+window.openScene=n=>{sel=n;render();window.scrollTo(0,0)};
+window.closeScene=()=>{sel=null;render()};
+
+// Tabs
+$("tabs").addEventListener("click",e=>{
+  if(!e.target.classList.contains("tab"))return;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));
+  e.target.classList.add("on");
+  view=e.target.dataset.v;sel=null;render();
+});
+
+// Search
+$("search").addEventListener("input",e=>{query=e.target.value;sel=null;render()});
+
+// Init
+render();
+</script>
+</body>
+</html>
